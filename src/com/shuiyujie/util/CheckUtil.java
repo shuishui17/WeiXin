@@ -2,7 +2,11 @@ package com.shuiyujie.util;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
-
+/**
+ * 校验工具类
+ * @author 弄浪的鱼
+ * @date 2017年5月13日
+ */
 public class CheckUtil {
 
 	private static final String token = "nonglang"; //微信上填写的 token

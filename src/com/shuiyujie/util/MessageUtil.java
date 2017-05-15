@@ -2,6 +2,7 @@ package com.shuiyujie.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,9 +15,17 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.shuiyujie.po.Image;
+import com.shuiyujie.po.ImageMessage;
+import com.shuiyujie.po.News;
+import com.shuiyujie.po.NewsMessage;
 import com.shuiyujie.po.TextMessage;
 import com.thoughtworks.xstream.XStream;
-
+/**
+ * 信息工具
+ * @author 弄浪的鱼
+ * @date 2017年5月13日
+ */
 public class MessageUtil {
 
 	//将消息类型定义成常量
@@ -123,5 +132,81 @@ public class MessageUtil {
 		StringBuffer sb = new StringBuffer();
 		sb.append("回复关键字3展示的信息");
 		return sb.toString();
+	}
+	
+	/**
+	 * 图文消息转成 XML
+	 * @param newsMessage
+	 * @return
+	 */
+	public static String newsMessageToXml(NewsMessage newsMessage){
+		XStream xstream = new XStream();
+		xstream.alias("xml", newsMessage.getClass());
+		xstream.alias("item", new News().getClass());
+		return xstream.toXML(newsMessage);
+	}
+	
+	/**
+	 * 组装图文消息
+	 * @param toUserName
+	 * @param fromUserName
+	 * @return
+	 */
+	public static String initNewsMessage(String toUserName,String fromUserName){
+		String message = null;
+		List<News> newsList = new ArrayList<News>();
+		NewsMessage newsMessage = new NewsMessage();
+
+		/**
+		 * 只有单条图文消息才有描述
+		 */
+		News news = new News();
+		news.setTitle("图文消息回复");
+		news.setDescription("图文消息回复图文消息回复图文消息回复图文消息回复图文消息回复图文消息回复图文消息回复图文消息回复图文消息回复图文消息回复");
+		news.setPicUrl("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1821218122,25120525&fm=23&gp=0.jpg");
+		news.setUrl("http://blog.csdn.net/shuicsdn/article/details/71023212");
+
+		newsList.add(news);
+
+		newsMessage.setToUserName(fromUserName);
+		newsMessage.setFromUserName(toUserName);
+		newsMessage.setCreateTime(new Date().getTime());
+		newsMessage.setMsgType(MESSAGE_NEWS);
+		newsMessage.setArticles(newsList);
+		newsMessage.setArticleCount(newsList.size());
+
+		message = newsMessageToXml(newsMessage);
+		return message;
+	}
+	
+	/**
+	 * 图片信息转成 XML
+	 * @param imageMessage
+	 * @return
+	 */
+	public static String imageMessageToXml(ImageMessage imageMessage){
+		XStream xstream = new XStream();
+		xstream.alias("xml", imageMessage.getClass());
+		return xstream.toXML(imageMessage);
+	}
+	
+	/**
+	 * 组装图片信息
+	 * @param toUserName
+	 * @param fromUserName
+	 * @return
+	 */
+	public static String initImageMessage(String toUserName,String fromUserName){
+		String message = null;
+		Image image = new Image();
+		image.setMediaId("cSoTBBPPYnNyFURuavak7rKXKOJ8S66MzIpHTih-kkO4vWk7a7WJUjPklT2mzF86");
+		ImageMessage imageMessage = new ImageMessage();
+		imageMessage.setFromUserName(toUserName);
+		imageMessage.setToUserName(fromUserName);
+		imageMessage.setMsgType(MESSAGE_IMAGE);
+		imageMessage.setCreateTime(new Date().getTime());
+		imageMessage.setImage(image);
+		message = imageMessageToXml(imageMessage);
+		return message;
 	}
 }
